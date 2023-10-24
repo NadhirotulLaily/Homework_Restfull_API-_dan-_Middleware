@@ -2,8 +2,154 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../config/db')
 const {authorize} = require('../middlewares/auth')
+const swaggerJsdoc = require('swagger-jsdoc');
+const swaggerUi = require('swagger-ui-express');
+
+const app = express()
+const port = 3000
+
+const options = {
+    definition: {
+      openapi: '3.0.0',
+        info: {
+            title: 'Express API with Swagger',
+            version: '0.1.0',
+            description:
+                'This is simple CRUD API application made with Express and documented wit swagger',
+        },
+        servers: [
+            {
+                url: 'http://localhost:3000',
+            },
+        ],
+        "tags": [
+            {
+                "name": "MOVIES",
+                "description": "POST tag description example"
+            }
+        ]
+    },
+    apis: ['.router/*'],
+  };
+  
+  const specs = swaggerJsdoc(options);
+  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
+  
+
+/**
+  @swagger
+ * components:
+ *  schemas:
+ *      movies:
+ *          type: object
+ *          properties: 
+ *            id:
+ *              type: string
+ *              description: The auto-generated id of the movies
+ *            title:
+ *              type: string
+ *              description: The title of your movies
+ *            genres:
+ *              type: string
+ *              description: The genre of movies 
+ *            year: 
+ *              type: string
+ *              description: The year the film was broadcast
+ */
+
+
+/**
+ * @swagger
+ * /movies
+ *              get:
+ *                  summary : To get all data movies from postgres
+ *                  "tags" : [MOVIES]
+ *                  description: This api is used to fetch data form postgres
+ *                  responses:
+ *                      200:
+ *                          description: This api is used to fetch data from postgres
+ *                          content:
+ *                              application/json:
+ *                                  schema:
+ *                                      type: array
+ *                                      items:
+ *                                          $ref: '#components/schema/movies'
+ */
+
+/**
+ * @swagger
+ * /movies:
+ *              get:
+ *                  summary :   To get all data movies from postgres
+ *                  "tags" : ["MOVIES"]
+ *                  description: This api is used to fetch data from postgres
+ *                  parameters:
+ *                      - in: path
+ *                        nama : id
+ *                        requires: true
+ *                        description Numeric ID required
+ *                        schema:
+ *                          type: integer
+ *                  responses:
+ *                      200:
+ *                          description: This api is used to fetch data form postgres
+ *                      400:
+ *                          description: Invalid ID supplied
+ *                      400:
+ *                          description: User not found
+ *                          content:
+ *                              application/json:
+ *                                  schema:
+ *                                      type: array
+ *                                      items:
+ *                                          $ref: '#components/schema/Movies'
+ */
+
+/**
+ * @swagger
+ * /movies:
+ *              post:
+ *                  sumary: Used to insert data movies to postgres
+ *                  "tags": ["MOVIES    "]
+ *                  description: This api is used to fetch data ftom postgres
+ *                  requestBody:
+ *                      required: true
+ *                      content:
+ *                          application/json:
+ *                              schema:
+ *                                  $ref: '#components/schemas/Movies'
+ *                  responses:
+ *                      200:
+ *                          description: Added Succesfully
+ *                      400:
+ *                          description: Invalid input
+ */
+
+/**
+ * @swagger
+ * /Movies/(id):
+ *              delete:
+ *                   summary : This APPI is used to deleted record data film postgres
+ *                   "tags" : [ "MOVIES" ]
+ *                   description : This api is used to fetch data from postgres
+ *                   parameters:
+ *                      - in: path
+ *                        nama : id
+ *                        requires: true
+ *                        description Numeric ID required
+ *                        schema:
+ *                          type: integer
+ *                  responses:
+ *                      200:
+ *                          description: This api is used to fetch data form postgres
+ *                      400:
+ *                          description: Invalid ID supplied
+ *                      400:
+ *                          description: User not found
+ */
 
 router.use(authorize);
+
 
 router.get('/', async function (request, response) {
     const page = parseInt(request.query.page) || 1;

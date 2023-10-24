@@ -20,10 +20,18 @@ module.exports = {
         }
     },
     authorize: async function (request, response, next) {
-        const isSupervisor = request.role === 'Supervisor'
+        try {
+            const isSupervisor = request.role === 'Supervisor'
 
         if(!isSupervisor) {
-            next({name: 'Unauthorized'})
+            throw new Error;
+        } else {
+            next();
         }
+    }catch(error) {
+        next({name: 'Unauthorized'})
     }
+            
+    }
+        
 }

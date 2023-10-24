@@ -2,6 +2,135 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../config/db')
 const { generateToken } = require('../helpers/jwt')
+const swaggerJsdoc = require('swagger-jsdoc');
+const swaggerUi = require('swagger-ui-express');
+
+const app = express()
+const port = 3000
+
+const options = {
+    definition: {
+      openapi: '3.0.0',
+        info: {
+            title: 'Express API with Swagger',
+            version: '0.1.0',
+            description:
+                'This is simple CRUD API application made with Express and documented wit swagger',
+        },
+        servers: [
+            {
+                url: 'http://localhost:3000',
+            },
+        ],
+        "tags": [
+            {
+                "name": "USERS",
+                "description": "POST tag description example"
+            }
+        ]
+    },
+    apis: ['.router/*'],
+  };
+  
+  const specs = swaggerJsdoc(options);
+  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
+
+
+/**
+ * @swagger
+ * components:
+ *  schemas:
+ *      users:
+ *          type: object
+ *          properties: 
+ *            id:
+ *              type: string
+ *              description: The auto-generated id of the movies
+ *            email:
+ *              type: string
+ *              description: The email of your movies
+ *            gender:
+ *              type: string
+ *              description: The your gender
+ *            password: 
+ *              type: string
+ *              description: Fill in the password uniquely and easy to remember
+ *            role: 
+ *              type: string
+ *              description: The role you play
+ */
+
+/**
+ * @swagger
+ * /users:
+ *              get:
+ *                  summary :   To get all data users from postgres
+ *                  "tags" : ["USERS"]
+ *                  description: This api is used to fetch data from postgres
+ *                  responses:
+ *                      200:
+ *                          description: This api is used to fetch data form postgres
+ *                          content:
+ *                              application/json:
+ *                                  schema:
+ *                                      type: array
+ *                                      items:
+ *                                          $ref: '#components/schema/users'
+ */
+
+/**
+ * @swagger
+ * /users:
+ *              post:
+ *                  summary : used to insert data users to postgres
+ *                  "tags" : ["USERS"]
+ *                  description: This api is used to fetch from postgres
+ *                  requestBody:
+ *                      required: true
+ *                      content:
+ *                          application/json:
+ *                              schema:
+ *                                  $ref: '#components/schema/users'
+ *                  response:
+ *                      200:
+ *                          description: Added Succesfully
+ *                      405:
+ *                          description: Invalid input
+ */
+
+/**
+ * @swagger
+ * /login
+ *              get:
+ *                  summary : To get all data users from postgres
+ *                  "tags" : ["USERS"]
+ *                  description: This api is used to fetch data from postgres
+ *                  parameters:
+ *                      - in: path
+ *                        name: email
+ *                        required: true
+ *                        description: Character email required
+ *                        schema:
+ *                          type: string
+ *                      - in: path
+ *                        name: password
+ *                        required: true
+ *                        description: Character password required
+ *                        schema:
+ *                          type: string
+ *                  responses:
+ *                      200:
+ *                          description: This api is used to fetch data from postgres
+ *                      400:
+ *                          description: Invalid email/password supplied
+ *                          content:
+ *                              application/json:
+ *                                  schema:
+ *                                      type: array
+ *                                      items:
+ *                                          $ref: '#components/schema/users'
+ */
+
 
 
 router.get('/', async function (request, response, next) {

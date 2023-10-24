@@ -3,8 +3,9 @@ const bodyParser  = require('body-parser')
 require("dotenv").config();
 const { authenticate } = require('./middlewares/auth')
 
+
 const app = express()
-const port = 3001
+const port = 3000
 
 
 const usersRouter = require('./router/users')
